@@ -38,6 +38,6 @@ export function prepCard() {
     rows.length ? h('ul', { class: 'tasks' }, rows) : h('p', { class: 'small muted' }, 'After each scan, the strongest new roles get a tailored CV, a cover letter and contacts, without you asking. Nothing is ever sent.'));
 }
 
-export async function prepareApp(app) {
-  try { await api.prepApp(app.id); await refresh(); toast(`${app.company}: preparing CV, cover letter and contacts. This takes a few minutes.`); } catch (e) { toast(e.message, { tone: 'bad' }); }
+export async function prepareApp(app, force = false) {
+  try { await api.prepApp(app.id, force); await refresh(); toast(`${app.company}: preparing CV, cover letter and contacts. This takes a few minutes.`); } catch (e) { toast(e.message, { tone: 'bad' }); }
 }

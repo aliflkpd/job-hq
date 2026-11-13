@@ -233,3 +233,4 @@ details.doc{display:block}details.doc summary{display:flex;gap:8px;align-items:c
 @media(max-width:700px){.prefs .two,.src-list{grid-template-columns:1fr}}
 .chip.clickable{cursor:pointer}.chip.clickable:hover{filter:brightness(.95)}.chip.spin svg{animation:spinr 1.2s linear infinite}@keyframes spinr{to{transform:rotate(360deg)}}.prefs section>.src{padding:2px 0}
 .prep-busy{display:flex;gap:8px;align-items:center;color:var(--blue-d)}.prep-busy svg{animation:spinr 1.2s linear infinite}
+.country-host{display:contents}

@@ -33,15 +33,29 @@ export function renderDiscover(root) {
       if (U.newOnly && !j.isNew) return false;
       if (U.hasPay && !j.salary) return false;
       if (U.mode && U.mode !== 'any' && j.mode !== U.mode) return false;
+      if (U.country && U.country !== 'any' && j.country !== U.country) return false;
       return true;
     }).sort(SORTS[U.sort]);
+  };
+
+  const countryHost = h('span', { class: 'country-host' });
+  const paintCountry = () => {
+    clear(countryHost);
+    const counts = new Map();
+    for (const j of jobsIn(U.tab)) counts.set(j.country, (counts.get(j.country) || 0) + 1);
+    if (U.country !== 'any' && !counts.has(U.country)) U.country = 'any';
+    if (counts.size < 2) return;
+    const opts = [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    countryHost.append(h('select', { class: 'select', 'aria-label': 'Country', onchange: (e) => { U.country = e.target.value; U.limit = 80; paintList(); } },
+      h('option', { value: 'any', selected: U.country === 'any' }, `Any country (${opts.length})`),
+      opts.map(([c, n]) => h('option', { value: c, selected: U.country === c }, `${c} (${n})`))));
   };
 
   const paintTabs = () => {
     clear(tabsHost);
     for (const [k, label] of [['open', 'Open to me'], ['visa', 'Needs a visa'], ['filtered', 'Filtered out'], ['dismissed', 'Dismissed']]) {
       const n = jobsIn(k).length;
-      tabsHost.append(h('button', { class: 'tab' + (U.tab === k ? ' on' : ''), role: 'tab', 'aria-selected': String(U.tab === k), type: 'button', onclick: () => { U.tab = k; U.limit = 80; paintTabs(); paintList(); } }, label, h('span', { class: 'n' }, String(n))));
+      tabsHost.append(h('button', { class: 'tab' + (U.tab === k ? ' on' : ''), role: 'tab', 'aria-selected': String(U.tab === k), type: 'button', onclick: () => { U.tab = k; U.limit = 80; paintTabs(); paintCountry(); paintList(); } }, label, h('span', { class: 'n' }, String(n))));
     }
   };
 
@@ -74,7 +88,7 @@ export function renderDiscover(root) {
     countHost.textContent = rows.length === all.length ? `${rows.length} roles` : `${rows.length} of ${all.length} roles`;
     if (!rows.length) {
       const [ic, t, b] = TAB_COPY[U.tab].empty;
-      listHost.append(emptyState(ic, all.length ? 'No roles match these filters' : t, all.length ? 'Loosen the search or turn a filter off.' : b, all.length ? h('button', { class: 'btn', type: 'button', onclick: () => { Object.assign(U, { q: '', within: 0, newOnly: false, hasPay: false, mode: 'any' }); emit(); } }, 'Clear filters') : null));
+      listHost.append(emptyState(ic, all.length ? 'No roles match these filters' : t, all.length ? 'Loosen the search or turn a filter off.' : b, all.length ? h('button', { class: 'btn', type: 'button', onclick: () => { Object.assign(U, { q: '', within: 0, newOnly: false, hasPay: false, mode: 'any', country: 'any' }); emit(); } }, 'Clear filters') : null));
       return;
     }
     rows.slice(0, U.limit).forEach((j, i) => listHost.append(row(j, i)));
@@ -93,12 +107,12 @@ export function renderDiscover(root) {
     toggle('Hide Staff and above', S.data.filters.hideStaff, async () => { await api.setFilters({ hideStaff: !S.data.filters.hideStaff }); await refresh(); }, 'sliders-horizontal'),
     newCount > 0 && h('button', { class: 'link-btn small', type: 'button', onclick: async () => { await api.seen(); await refresh(); toast('Marked everything as seen.'); } }, 'Mark all seen'));
 
-  paintTabs(); paintList();
+  paintTabs(); paintCountry(); paintList();
   root.append(
     h('header', { class: 'page-head' }, h('div', null, h('h1', null, 'Discover'), h('p', { class: 'sub' }, `${S.data.jobs.length} postings passed your filters in the last scans. Sorted by a plain-rules fit estimate, not by AI.`))),
     scanPanel(),
     tabsHost, noteHost,
-    h('div', { class: 'toolbar' }, search, mode, within, sort, countHost), chips,
+    h('div', { class: 'toolbar' }, search, countryHost, mode, within, sort, countHost), chips,
     listHost,
   );
 

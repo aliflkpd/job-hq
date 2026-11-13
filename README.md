@@ -77,7 +77,7 @@ Then open **http://127.0.0.1:4747**. Type `http://` yourself: some browsers forc
    - **Plus**: track it in Applications.
    - **Eye-off**: dismiss it (an Undo appears).
    - **Arrow**: open the posting.
-4. Narrow the list with search, **work type** (Remote, Hybrid, On-site, Not stated), **posted within**, sort order, *New*, *Has pay listed* and *Hide Staff and above*. Work type comes only from the location text, so many postings say "Not stated". Check the posting itself before relying on On-site.
+4. Narrow the list with search, **country** (the dropdown lists the countries in the current tab with counts, for example Singapore or Malaysia under Needs a visa), **work type** (Remote, Hybrid, On-site, Not stated), **posted within**, sort order, *New*, *Has pay listed* and *Hide Staff and above*. Work type comes only from the location text, so many postings say "Not stated". Check the posting itself before relying on On-site.
 
 ### The application drawer
 

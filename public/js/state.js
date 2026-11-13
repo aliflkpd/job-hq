@@ -14,7 +14,7 @@ export const S = {
   peek: null, // job url shown in the job drawer
   drawerApp: null, // application id shown in the app drawer
   ui: {
-    discover: { mode: 'any', tab: 'open', q: '', sort: 'fit', within: 0, newOnly: false, hasPay: false, limit: 80 },
+    discover: { mode: 'any', country: 'any', tab: 'open', q: '', sort: 'fit', within: 0, newOnly: false, hasPay: false, limit: 80 },
     contacts: { status: 'all', q: '' },
     apps: { view: 'board' },
   },

@@ -72,8 +72,11 @@ export function renderAppDrawer(host) {
   const docBox = h('section', { class: 'block' }, h('h3', null, 'Documents'),
     docs.length ? docs.map((d) => docRow(d)) : null,
     busy && h('p', { class: 'prep-busy small' }, icon('arrows-clockwise', 14), pp.status === 'queued' ? 'Waiting in the prep queue.' : 'Preparing the CV, cover letter and contacts. This takes a few minutes, you can leave this open.'),
-    !busy && !docs.length && h('p', { class: 'muted small' }, pp?.status === 'failed' ? `The last prep failed: ${pp.error || 'unknown error'}` : pp?.status === 'skipped' ? `Prep skipped this role: ${pp.note || ''}` : 'Nothing prepared for this one yet.'),
-    !busy && !docs.length && h('button', { class: 'btn sm primary', type: 'button', onclick: () => prepareApp(a) }, icon('file-pdf', 14), pp?.status === 'failed' ? 'Try again' : 'Prepare CV, letter and contacts'));
+    !busy && !docs.length && h('p', { class: 'muted small' }, pp?.status === 'failed' ? `The last prep failed: ${pp.error || 'unknown error'}` : pp?.status === 'skipped' ? `Prep checked this role and skipped it: ${pp.note || ''}` : 'Nothing prepared for this one yet.'),
+    !busy && !docs.length && (pp?.status === 'skipped'
+      ? h('div', null, h('p', { class: 'small muted' }, 'Pressing Prepare again would give the same answer. If you want to apply anyway, the CV and letter are built without the skip, and the gaps are listed in the notes.'),
+        h('button', { class: 'btn sm primary', type: 'button', onclick: () => prepareApp(a, true) }, icon('file-pdf', 14), 'Prepare anyway'))
+      : h('button', { class: 'btn sm primary', type: 'button', onclick: () => prepareApp(a) }, icon('file-pdf', 14), pp?.status === 'failed' ? 'Try again' : 'Prepare CV, letter and contacts')));
 
   /* details */
   const notes = h('textarea', { class: 'input', rows: 3, placeholder: 'Your private notes', 'aria-label': 'Notes', onblur: (e) => { if (e.target.value !== (a.notesLocal || '')) patchApp(a, { notes: e.target.value }); } }, a.notesLocal || '');
@@ -149,7 +152,7 @@ export function renderJobDrawer(host) {
     h('div', { class: 'reasons-total' }, h('span', null, 'Estimate'), h('strong', { class: 'mono' }, `${j.score} / 100`)));
 
   const details = h('section', { class: 'block' }, h('h3', null, 'Details'),
-    h('dl', { class: 'kvs' }, kv('Location', j.location || 'Not stated'), kv('Region', j.regionLabel), kv('Access', j.accessLabel), kv('Level', { junior: 'Junior', mid: 'Mid', senior: 'Senior', lead: 'Lead or manager', staff: 'Staff, Principal or Head' }[j.level]), kv('Posted', j.posted ? `${dateShort(j.posted)} (${agoShort(j.daysAgo)})` : 'Not stated'), kv('Found on', j.source), pay && kv('Pay listed', pay), j.tracked && kv('Tracking', 'Already in Applications')));
+    h('dl', { class: 'kvs' }, kv('Location', j.location || 'Not stated'), kv('Country', j.country), kv('Access', j.accessLabel), kv('Level', { junior: 'Junior', mid: 'Mid', senior: 'Senior', lead: 'Lead or manager', staff: 'Staff, Principal or Head' }[j.level]), kv('Posted', j.posted ? `${dateShort(j.posted)} (${agoShort(j.daysAgo)})` : 'Not stated'), kv('Found on', j.source), pay && kv('Pay listed', pay), j.tracked && kv('Tracking', 'Already in Applications')));
 
   const panel = drawerShell(host, { label: `${j.title} at ${j.company}`, onClose: closeDrawers, children: [head, sub, h('div', { class: 'drawer-body' }, actions, why, details)] });
   panel.querySelector('.icon-btn')?.focus();
