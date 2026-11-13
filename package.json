@@ -1,0 +1,16 @@
+{
+  "name": "job-hq",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.mjs",
+    "sprite": "node build-sprite.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@phosphor-icons/core": "^2.1.1"
+  }
+}
